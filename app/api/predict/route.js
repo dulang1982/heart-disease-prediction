@@ -1,4 +1,8 @@
+import { verify } from "jsonwebtoken";
+import connectDB from "@/lib/db";
+import User from "@/models/User";
 import { NextResponse } from "next/server";
+import Prediction from "@/models/Prediction";
 
 const calculateRiskScore = (patient) => {
   const WEIGHTS = {
@@ -40,6 +44,23 @@ const determineRiskLevel = (score) => {
 
 export async function POST(req) {
   try {
+    await connectDB();
+
+    const token = req.cookies.get("token")?.value;
+    if (!token) {
+      return NextResponse.json(
+        { message: "Not authenticated" },
+        { status: 401 }
+      );
+    }
+
+    const decoded = verify(token, process.env.JWT_SECRET); // Verify the JWT token
+    const user = await User.findById(decoded.userId); // Find the user by ID
+
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
     const {
       age,
       bloodPressure,
@@ -48,7 +69,7 @@ export async function POST(req) {
       bmi,
       smoker,
       diabetic,
-    } = await req.json();
+    } = await req.json(); // Extract patient data from the request body
 
     // console.log("Received Data:", {
     //   age,
@@ -60,6 +81,7 @@ export async function POST(req) {
     //   diabetic,
     // });
 
+    // Calculate the risk score
     const riskScore = calculateRiskScore({
       age,
       bloodPressure,
@@ -70,8 +92,10 @@ export async function POST(req) {
       diabetic,
     });
 
+    // Determine the risk level based on the score
     const riskLevel = determineRiskLevel(riskScore);
 
+    // Generate suggestions based on the risk level
     const suggestions =
       riskLevel === "High"
         ? [
@@ -86,6 +110,22 @@ export async function POST(req) {
             "Stay active",
             "Regular health check-ups",
           ];
+
+    // Save the prediction to the database associated with the user
+    const newPrediction = new Prediction({
+      userId: user._id, // Associate the prediction with the logged-in user
+      age,
+      bloodPressure,
+      cholesterol,
+      heartRate,
+      bmi,
+      smoker,
+      diabetic,
+      score: riskScore.toFixed(1),
+      level: riskLevel,
+    });
+
+    await newPrediction.save(); // Save the prediction
 
     return NextResponse.json({
       score: riskScore.toFixed(1),
