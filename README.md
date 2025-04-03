@@ -14,6 +14,7 @@ npm install
 yarn install
 # or
 pnpm install
+```
 
 ## Running the Development Server
 Once the dependencies are installed, run the development server:
@@ -23,6 +24,7 @@ npm run dev
 yarn dev
 # or
 pnpm dev
+```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
