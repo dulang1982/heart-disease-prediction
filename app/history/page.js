@@ -1,8 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import pdfMake from "pdfmake/build/pdfmake";
+import { vfs } from "pdfmake/build/vfs_fonts"; // Correct import
+pdfMake.vfs = vfs;
 
 export default function History() {
   const [user, setUser] = useState(null);
@@ -33,8 +36,64 @@ export default function History() {
     return d.toLocaleDateString("en-CA"); // 'en-CA' is the locale for 'YYYY-MM-DD' format
   };
 
-  // const downloadPDF = () => {
-  // };
+  const downloadPDF = () => {
+    const tableData = predictions.map((prediction) => [
+      formatDate(prediction.date),
+      prediction.age,
+      prediction.bloodPressure,
+      prediction.cholesterol,
+      prediction.heartRate,
+      prediction.bmi,
+      prediction.smoker,
+      prediction.diabetic,
+      prediction.score,
+      prediction.level,
+    ]);
+
+    const docDefinition = {
+      pageMargins: [30, 10, 20, 10], // Left, Top, Right, Bottom
+      content: [
+        { text: "Prediction History", style: "header" },
+        {
+          text: [
+            { text: "Name: ", bold: true },
+            { text: `${user.name}\n` }, 
+            { text: "Email: ", bold: true },
+            { text: `${user.email}\n` },
+          ],
+          margin: [0, 10, 0, 10], // Margin for spacing
+        },
+        {
+          table: {
+            body: [
+              [
+                "Date",
+                "Age",
+                "Blood Pressure",
+                "Cholesterol",
+                "Heart Rate",
+                "BMI",
+                "Smoker",
+                "Diabetic",
+                "Score",
+                "Level",
+              ],
+              ...tableData,
+            ],
+          },
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 12,
+          bold: true,
+          alignment: "center",
+        },
+      },
+    };
+
+    pdfMake.createPdf(docDefinition).download("prediction-history.pdf");
+  };
 
   const getLevelColor = (level) => {
     if (level === "High") return "bg-red-500";
@@ -51,21 +110,21 @@ export default function History() {
         transition={{ duration: 0.5 }}
         className="max-w-6xl mx-auto p-4"
       >
-        <div className="bg-white p-8 shadow-lg rounded-lg text-center mb-10 relative">
+        <div className="bg-white p-8 shadow-lg rounded-lg text-center mb-10">
           <h2 className="text-2xl font-bold text-center text-gray-700">
             Prediction History
           </h2>
           {user ? (
             <>
-              <p className="mt-4 text-gray-600 text-center">
+              <p className="my-2 text-gray-600 text-center">
                 View your past predictions and download them as a PDF.
               </p>
-              {/* <button
+              <button
                 onClick={downloadPDF}
-                className="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg"
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
               >
-                Download History
-              </button> */}
+                Download PDF
+              </button>
               <div className="mt-8 overflow-x-auto">
                 <table className="min-w-full table-auto border-collapse border border-gray-300 text-gray-800">
                   <thead>
