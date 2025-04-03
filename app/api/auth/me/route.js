@@ -16,13 +16,16 @@ export async function GET(req) {
     }
 
     const decoded = verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.userId).select("email");
+    const user = await User.findById(decoded.userId);
 
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ email: user.email }, { status: 200 });
+    // Remove password from the user data
+    const { password, ...userData } = user.toObject();
+
+    return NextResponse.json(userData, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { message: "Error fetching user" },
