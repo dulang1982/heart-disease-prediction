@@ -20,8 +20,10 @@ export default function SignUp() {
     const data = await res.json();
 
     if (res.ok) {
-      toast.success("Account created successfully! Redirecting...");
-      setTimeout(() => (window.location.href = "/signin"), 2000);
+      toast.success(
+        "Account created successfully! Please check your email to verify your account."
+      );
+      setTimeout(() => (window.location.href = "/auth/signin"), 2000);
     } else {
       toast.error(data.message || "Sign-up failed. Try again.");
     }

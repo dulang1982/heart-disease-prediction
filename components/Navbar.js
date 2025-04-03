@@ -100,13 +100,13 @@ export default function Navbar() {
               ) : (
                 <>
                   <Link
-                    href="/signin"
+                    href="/auth/signin"
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                   >
                     Sign In
                   </Link>
                   <Link
-                    href="/signup"
+                    href="/auth/signup"
                     className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300"
                   >
                     Sign Up
@@ -165,13 +165,13 @@ export default function Navbar() {
             ) : (
               <>
                 <Link
-                  href="/signin"
+                  href="/auth/signin"
                   className="block py-2 bg-blue-600 text-white rounded-lg text-center"
                 >
                   Sign In
                 </Link>
                 <Link
-                  href="/signup"
+                  href="/auth/signup"
                   className="block py-2 bg-gray-200 text-gray-800 rounded-lg text-center"
                 >
                   Sign Up

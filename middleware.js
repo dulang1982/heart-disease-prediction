@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { verify } from "jsonwebtoken";
 
 export function middleware(req) {
   const protectedRoutes = ["/predict", "/history", "/profile"];
-  const authRoutes = ["/signin", "/signup"];
+  const authRoutes = ["/auth/signin", "/auth/signup"];
   const token = req.cookies.get("token")?.value;
   const url = req.nextUrl.clone();
 
@@ -11,7 +10,7 @@ export function middleware(req) {
 
   // If user tries to access protected routes without a token, redirect to /signin
   if (protectedRoutes.includes(url.pathname) && !token) {
-    return NextResponse.redirect(new URL("/signin", req.url));
+    return NextResponse.redirect(new URL("/auth/signin", req.url));
   }
 
   // If user tries to access /signin or /signup while logged in, redirect to /
@@ -23,5 +22,5 @@ export function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/predict", "/history", "/profile", "/signin", "/signup"],
+  matcher: ["/predict", "/history", "/profile", "/auth/signin", "/auth/signup"],
 };

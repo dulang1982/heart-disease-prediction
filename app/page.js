@@ -18,13 +18,13 @@ export default function Home() {
         </p>
         <div className="mt-6 flex gap-4">
           <Link
-            href="/signin"
+            href="/auth/signin"
             className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition"
           >
             Sign In
           </Link>
           <Link
-            href="/signup"
+            href="/auth/signup"
             className="bg-gray-200 text-gray-900 px-6 py-3 rounded-lg text-lg font-semibold hover:bg-gray-300 transition"
           >
             Sign Up

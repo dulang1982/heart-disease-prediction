@@ -29,10 +29,14 @@ export async function POST(req) {
     await sendVerificationEmail(email, verificationToken);
 
     return Response.json(
-      { message: "User registered, check email for verification" },
+      {
+        message:
+          "User registered, Please check your email to verify your account.",
+      },
       { status: 201 }
     );
   } catch (error) {
+    console.log(error)
     return Response.json({ message: "Error signing up" }, { status: 500 });
   }
 }
